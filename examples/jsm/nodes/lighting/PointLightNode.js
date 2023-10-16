@@ -55,7 +55,7 @@ class PointLightNode extends AnalyticLightNode {
 			lightDirection,
 			lightColor,
 			reflectedLight
-		} );
+		}, builder.stack, builder );
 
 	}
 
@@ -63,6 +63,6 @@ class PointLightNode extends AnalyticLightNode {
 
 export default PointLightNode;
 
-addLightNode( PointLight, PointLightNode );
+addNodeClass( 'PointLightNode', PointLightNode );
 
-addNodeClass( PointLightNode );
+addLightNode( PointLight, PointLightNode );

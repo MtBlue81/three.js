@@ -1,4 +1,4 @@
-import { MathNode, GLSLNodeParser, NodeBuilder, NodeMaterial } from '../../../nodes/Nodes.js';
+import { MathNode, GLSLNodeParser, NodeBuilder, NodeMaterial, FunctionNode } from '../../../nodes/Nodes.js';
 
 import UniformsGroup from '../../common/UniformsGroup.js';
 import { NodeSampledTexture, NodeSampledCubeTexture } from '../../common/nodes/NodeSampledTexture.js';
@@ -12,6 +12,10 @@ const precisionLib = {
 	low: 'lowp',
 	medium: 'mediump',
 	high: 'highp'
+};
+
+const supports = {
+	instance: true
 };
 
 class GLSLNodeBuilder extends NodeBuilder {
@@ -35,6 +39,36 @@ class GLSLNodeBuilder extends NodeBuilder {
 		if ( node.isOutputStructVar ) return '';
 
 		return super.getPropertyName( node, shaderStage );
+
+	}
+
+	buildFunctionNode( shaderNode ) {
+
+		const layout = shaderNode.layout;
+		const flowData = this.flowShaderNode( shaderNode );
+
+		const parameters = [];
+
+		for ( const input of layout.inputs ) {
+
+			parameters.push( this.getType( input.type ) + ' ' + input.name );
+
+		}
+
+		//
+
+		const code = `${ this.getType( layout.type ) } ${ layout.name }( ${ parameters.join( ', ' ) } ) {
+
+	${ flowData.vars }
+
+${ flowData.code }
+	return ${ flowData.result };
+
+}`;
+
+		//
+
+		return new FunctionNode( code );
 
 	}
 
@@ -176,7 +210,7 @@ class GLSLNodeBuilder extends NodeBuilder {
 
 		if ( shaderStage === 'vertex' ) {
 
-			const attributes = this.attributes;
+			const attributes = this.getAttributesArray();
 
 			let location = 0;
 
@@ -284,6 +318,13 @@ class GLSLNodeBuilder extends NodeBuilder {
 		return 'gl_FragCoord';
 
 	}
+
+	isAvailable( name ) {
+
+		return supports[ name ] === true;
+
+	}
+
 
 	isFlipY() {
 
@@ -439,9 +480,6 @@ void main() {
 
 			this.vertexShader = this._getGLSLVertexCode( shadersData.vertex );
 			this.fragmentShader = this._getGLSLFragmentCode( shadersData.fragment );
-
-			//console.log( this.vertexShader );
-			//console.log( this.fragmentShader );
 
 		} else {
 

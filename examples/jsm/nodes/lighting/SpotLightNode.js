@@ -76,7 +76,7 @@ class SpotLightNode extends AnalyticLightNode {
 			lightDirection,
 			lightColor,
 			reflectedLight
-		} );
+		}, builder.stack, builder );
 
 	}
 
@@ -84,6 +84,6 @@ class SpotLightNode extends AnalyticLightNode {
 
 export default SpotLightNode;
 
-addLightNode( SpotLight, SpotLightNode );
+addNodeClass( 'SpotLightNode', SpotLightNode );
 
-addNodeClass( SpotLightNode );
+addLightNode( SpotLight, SpotLightNode );

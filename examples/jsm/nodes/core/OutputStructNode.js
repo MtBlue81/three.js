@@ -32,7 +32,7 @@ class OutputStructNode extends Node {
 
 	generate( builder, output ) {
 
-		const nodeVar = builder.getVarFromNode( this, this.nodeType );
+		const nodeVar = builder.getVarFromNode( this );
 		nodeVar.isOutputStructVar = true;
 
 		const propertyName = builder.getPropertyName( nodeVar );
@@ -59,4 +59,4 @@ export default OutputStructNode;
 
 export const outputStruct = nodeProxy( OutputStructNode );
 
-addNodeClass( OutputStructNode );
+addNodeClass( 'OutputStructNode', OutputStructNode );
